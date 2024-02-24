@@ -17,21 +17,16 @@ export def FindPath(): string
   return find_path
 enddef
 
-# TODO: fix grep
 export def Grep(qargs: string, prg: string, bang: bool, type: string = '')
-  const shellpipe = &shellpipe
-  defer execute($'setlocal grepprg={&l:grepprg} gfm={&l:grepformat}')
-  defer execute($'set shellpipe={shellpipe}')
-
-  &l:grepprg = prg
-  &l:grepformat = '%f'
-  if shellpipe ==# '2>&1| tee' || shellpipe ==# '|& tee'
-    &shellpipe = '| tee'
-  endif
-
-  execute($'{type}grep! {qargs}')
-
-  if !bang && !empty(getqflist())
-    cfirst
-  endif
+  setqflist([], 'r')
+  job_start(['/bin/sh', '-c', $'{prg} {qargs}'], {
+    out_cb: (_, m) => {
+      setqflist([{filename: m}], 'a')
+    },
+    close_cb: (_) => {
+      if !bang && !empty(getqflist())
+        cfirst
+      endif
+    },
+  })
 enddef
