@@ -1,0 +1,83 @@
+*vim9-unix.txt*  File manipulation
+
+INTRODUCTION                                    *vim9-unix*
+
+Vim sugar for the UNIX shell commands that need it the most.  Delete or rename
+a buffer and the underlying file at the same time.  Load a `find` or a
+`locate` into the quickfix list.  And so on.
+
+COMMANDS                                        *vim9-unux-commands*
+
+                                                *vim9-unux-:Remove*
+:Remove[!]              Delete the file from disk and reload the buffer.  If
+                        you change your mind, the contents of the buffer can
+                        be restored with |u| (see 'undoreload').
+
+                                                *vim9-unux-:Delete*
+:Delete[!]              Delete the file from disk and |:bdelete| the buffer.
+                        This cannot be undone, and thus a `!` is required to
+                        delete non-empty files.
+
+                                                *vim9-unix-:Copy*
+:Copy[!] {file}         Small wrapper around |:saveas|.  Parent directories
+                        are automatically created.  If the argument itself is
+                        a directory, a file with the same basename will be
+                        created inside that directory.
+
+                                                *vim9-unix-:Duplicate*
+:Duplicate[!] {file}    Like |:Copy|, but the argument is taken as relative to
+                        the current file's parent directory.
+
+                                                *vim9-unix-:Move*
+:Move[!] {file}         Like |:Copy|, but delete the old file and |:bwipe| the
+                        old buffer afterwards.
+
+                                                *vim9-unix-:Rename*
+:Rename[!] {file}       Like |:Move|, but the argument is taken as relative to
+                        the current file's parent directory.
+
+                                                *vim9-unix-:Mkdir*
+:Mkdir {dir}            Create directory {dir} and all parent directories,
+                        like `mkdir -p`.
+
+:Mkdir                  With no argument, create the containing directory for
+                        the current file.
+
+                                                *vim9-unix-:Cfind*
+:Cfind[!] {args}        Run `find` and load the results into the quickfix
+                        list.  Jump to the first result unless ! is given.
+
+                                                *vim9-unix-:Lfind*
+:Lfind[!] {args}        Run `find` and load the results into the location
+                        list.  Jump to the first result unless ! is given.
+
+                                                *vim9-unix-:Clocate*
+:Clocate[!] {args}      Run `locate` and load the results into the quickfix
+                        list.  Jump to the first result unless ! is given.
+
+                                                *vim9-unix-:Llocate*
+:Llocate[!] {args}      Run `locate` and load the results into the location
+                        list.  Jump to the first result unless ! is given.
+
+                                                *vim9-unix-:SudoEdit*
+:SudoEdit [file]        Edit a file using sudo.  This overrides any read
+                        permission issues, plus allows you to write the file
+                        with :w!.
+
+                                                *vim9-unix-:SudoWrite*
+:SudoWrite              Use sudo to write the file to disk.  Handy when you
+                        forgot to use sudo to invoke Vim.  This uses :SudoEdit
+                        internally, so after the first invocation you can
+                        subsequently use :w!.
+
+                        Both sudo commands are implemented using `sudo -e`,
+                        also known as sudoedit.  This has the advantage of
+                        respecting sudoedit permissions in /etc/sudoers, and
+                        the constraint of not allowing edits to symlinks or
+                        files in writable directories, both of which can be
+                        abused in some circumstances to write to files that
+                        were not intended.  These restrictions can be lifted
+                        with the sudoedit_follow and sudoedit_checkdir sudo
+                        options, respectively.
+
+ vim:tw=78:et:ft=help:norl:
