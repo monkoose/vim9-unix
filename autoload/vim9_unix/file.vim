@@ -123,13 +123,6 @@ export def Move(qargs: string, bang: bool)
   if !bang && utils.Fcall('filereadable', dst)
     utils.ErrMessage('File already exists (add ! to override)')
     return
-    # const confirm = &confirm
-    # try
-    #   if confirm | set noconfirm | endif
-    #   exe AbortOnError('keepalt saveas ' .. fnameescape(dst))
-    # finally
-    #   if confirm | set confirm | endif
-    # endtry
   endif
 
   const src = expand('%')
