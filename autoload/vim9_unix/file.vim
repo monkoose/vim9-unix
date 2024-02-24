@@ -107,7 +107,11 @@ export def Copy(qargs: string, mods: string, bang: string)
   var dst = FileDest(qargs)
   call call('call', utils.MkdirCallable(fnamemodify(dst, ':h')))
   dst = utils.Fcall('simplify', dst)
-  execute($'{expand(mods)} saveas{bang} {fnameescape(dst)}')
+  try
+    execute($'{expand(mods)} saveas{bang} {fnameescape(dst)}')
+  catch '^Vim(\w\+):E\%(13\|139\):'
+    utils.ErrMessage('File already exists (add ! to override)')
+  endtry
   filetype detect
 enddef
 
@@ -128,7 +132,6 @@ export def Move(qargs: string, bang: bool)
     # endtry
   endif
 
-  # TODO: fix when dst already exists
   const src = expand('%')
   if utils.Fcall('filereadable', src) && Rename(src, dst)
     utils.ErrMessage($'Failed to rename "{src}" to "{dst}"')
@@ -136,8 +139,9 @@ export def Move(qargs: string, bang: bool)
     const last_bufnr = bufnr('$')
     exe AbortOnError('silent keepalt file ' .. fnameescape(dst))
 
-    if bufnr('$') != last_bufnr
-      exe $':{bufnr("$")} bwipe'
+    const lb = bufnr('$')
+    if lb != last_bufnr
+      exe $':{lb}bwipe'
     endif
 
     setlocal modified
