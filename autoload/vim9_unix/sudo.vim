@@ -29,9 +29,8 @@ def SudoSetup(f: string, resolve_symlink: bool)
     endif
   endif
 
-  file = substitute(file, utils.slash_pat, '/', 'g')
   if file !~# '^\a\+:\|^/'
-    file = substitute(getcwd(), utils.slash_pat, '/', 'g') .. '/' .. file
+    file = getcwd() .. '/' .. file
   endif
   const escaped_file = fnameescape(file)
   if !filereadable(file) && !exists('#unix_sudo#BufReadCmd#' .. escaped_file)

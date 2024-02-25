@@ -1,6 +1,6 @@
 vim9script noclear
 
-if exists('g:loaded_vim9_unix')
+if exists(':SudoWrite') == 2 || has('win32')
   finish
 endif
 g:loaded_vim9_unix = 1
@@ -22,9 +22,9 @@ command! -bar -nargs=1 -bang -complete=customlist,file.Complete Rename file.Move
 command! -bar -nargs=1 -bang -complete=customlist,file.Complete Duplicate file.Copy(escape(file.RenameArg(<q-args>), '"|'), <q-mods>, <q-bang>)
 
 # Find
-command! -bang -complete=file -nargs=+ Cfind   find.Grep(<q-args>, find.FindPath(), <bang>0)
+command! -bang -complete=file -nargs=+ Cfind   find.Grep(<q-args>, 'find', <bang>0)
+command! -bang -complete=file -nargs=+ Lfind   find.Grep(<q-args>, 'find', <bang>0, 'l')
 command! -bang -complete=file -nargs=+ Clocate find.Grep(<q-args>, 'locate', <bang>0)
-command! -bang -complete=file -nargs=+ Lfind   find.Grep(<q-args>, find.FindPath(), <bang>0, 'l')
 command! -bang -complete=file -nargs=+ Llocate find.Grep(<q-args>, 'locate', <bang>0, 'l')
 
 # Sudo

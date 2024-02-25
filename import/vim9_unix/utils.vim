@@ -1,16 +1,5 @@
 vim9script
 
-# configure separator for windows
-export var slash_pat: string
-export var Separator: func(): string
-if exists('+shellslash')
-  slash_pat = '[\/]'
-  Separator = () => &shellslash ? '/' : '\'
-else
-  slash_pat = '/'
-  Separator = () => '/'
-endif
-
 export def Ffn(fn: string, path: string): func
   const io_dict = 'io_' .. matchstr(path, '^\a\a\+\ze:')
   return get(g:, io_dict, {})->get(fn, function(fn))

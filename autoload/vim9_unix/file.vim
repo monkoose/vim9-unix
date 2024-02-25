@@ -51,14 +51,13 @@ export def Delete(bang: string)
 enddef
 
 # ~/f, $VAR/f, /f, C:/f, url://f, ./f, ../f
-const absolute_pat = '^[~$]\|^' .. utils.slash_pat .. '\|^\a\+:\|^\.\.\=\%(' .. utils.slash_pat .. '\|$\)'
+const absolute_pat = '^[~$]\|^/\|^\a\+:\|^\.\.\=\%(/\|$\)'
 
 export def Complete(leading: string, _, _): list<string>
-  const sep = utils.Separator()
-  const prefix = leading =~# absolute_pat ? '' : expand('%:h') .. sep
+  const prefix = leading =~# absolute_pat ? '' : expand('%:h') .. '/'
   var files = glob(prefix .. leading .. '*')
                 ->split("\n")
-                ->map((_, v) => fnameescape(strpart(v, len(prefix)) .. (isdirectory(v) ? sep : '')))
+                ->map((_, v) => fnameescape(strpart(v, len(prefix)) .. (isdirectory(v) ? '/' : '')))
   return files
 enddef
 
@@ -95,12 +94,12 @@ enddef
 
 def FileDest(qargs: string): string
   var file = qargs
-  if file =~# utils.slash_pat .. '$'
+  if file =~# '/$'
     file ..=  expand('%:t')
   elseif utils.Fcall('isdirectory', file)
-    file ..= utils.Separator() .. expand('%:t')
+    file ..= '/' .. expand('%:t')
   endif
-  return substitute(file, '^\.' .. utils.slash_pat, '', '')
+  return substitute(file, '^\./', '', '')
 enddef
 
 export def Copy(qargs: string, mods: string, bang: string)
