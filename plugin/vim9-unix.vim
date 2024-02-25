@@ -3,7 +3,6 @@ vim9script noclear
 if exists(':SudoWrite') == 2 || has('win32')
   finish
 endif
-g:loaded_vim9_unix = 1
 
 import autoload '../autoload/vim9_unix/dir.vim'
 import autoload '../autoload/vim9_unix/file.vim'
